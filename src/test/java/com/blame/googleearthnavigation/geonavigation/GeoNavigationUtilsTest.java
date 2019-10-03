@@ -1,4 +1,4 @@
-package geonavigation;
+package com.blame.googleearthnavigation.geonavigation;
 
 import org.junit.Test;
 

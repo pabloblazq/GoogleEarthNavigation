@@ -1,4 +1,4 @@
-package com.blame.googleearthnavigation;
+package com.blame.googleearthnavigation.googleearth;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
