@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,17 +39,26 @@ public class Launcher {
         // write coordinates into the CSV file
         File fileCSVCoordinates = new File(baseFolderName + File.separator + "coordinates.csv");
         FileWriter fw = new FileWriter(fileCSVCoordinates);
-        fw.write("index,latitude,longitude" + System.lineSeparator());
+        fw.write("index,latitude,longitude,heading,look_h,look_t,is_visiting" + System.lineSeparator());
         for(int i = 0; i < navigationPointList.size(); i++) {
         	NavigationPoint navigationPoint = navigationPointList.get(i);
-        	fw.write((i + 1) + "," + navigationPoint.getCoordinates().getLatitude() + "," + navigationPoint.getCoordinates().getLongitude() + System.lineSeparator());
+        	fw.write((i + 1) + "," + 
+        			navigationPoint.getCoordinates().getLatitude() + "," + navigationPoint.getCoordinates().getLongitude() + "," +
+        			navigationPoint.getHeading() + "," + navigationPoint.getLookDirectionH() + "," + navigationPoint.getLookDirectionT() + "," +
+        			navigationPoint.isVisiting() + System.lineSeparator());
         }
         fw.close();
 
         // take the Google Earth screenshots
 		GoogleEarthWebDriverManager webDriverManager = new GoogleEarthWebDriverManager(baseFolderName);
-		Thread.sleep(150*60*1000);
+		
+		//Thread.sleep(90*60*1000);
 		//Thread.sleep(10*1000);
+		
+//		List<Integer> errorList = Arrays.asList(145, 325, 453, 791);
+//        for(int errorIndex = 0; errorIndex < errorList.size(); errorIndex++) {
+//        	int i = errorList.get(errorIndex);
+
         for(int i = 0; i < navigationPointList.size(); i++) {
         	try {
         		logger.info("------------------------------------------------------------------------------------------------------------------------");
@@ -56,24 +66,11 @@ public class Launcher {
 				String url = webDriverManager.buildURL(navigationPoint);
 				logger.info("Taking  screenshot for URL {}: {}", i + 1, url);
 				webDriverManager.prepareScreenshot(url);
-//				// retry if the url was transformed
-//				if(!webDriverManager.getCurrentURL().equals(url)) {
-//					logger.info("Retry 1 screenshot for URL {}: {}", i + 1, webDriverManager.getCurrentURL());
-//					webDriverManager.prepareScreenshot(url);
-//					if(!webDriverManager.getCurrentURL().equals(url)) {
-//						logger.info("Retry 2 screenshot for URL {}: {}", i + 1, webDriverManager.getCurrentURL());
-//						webDriverManager.prepareScreenshot(url);
-//					}
-//				}
-				webDriverManager.takeScreenshot();
+				webDriverManager.takeScreenshotToJPG();
 				logger.info("Taken   screenshot for URL {}: {}", i + 1, webDriverManager.getCurrentURL());
 			} catch (Exception e) {
 				logger.catching(e);
 			}
-        	
-//        	if(i == 9) {
-//        		break;
-//        	}
         }		
 		logger.info("------------------------------------------------------------------------------------------------------------------------");
 		webDriverManager.close();

@@ -9,8 +9,9 @@ public class NavigationRule {
 	protected double maxHeadingChange;
 	protected double maxLookingDirectionChange;
 	protected double deltaMaxLookingDirectionChange;
+	protected int groundAltitude;
 	protected List<Coordinates> checkpoints;
-	protected List<Coordinates> spots;
+	protected List<SpotCoordinates> spots;
 	
 	
 	public double getStepDistance() {
@@ -33,11 +34,15 @@ public class NavigationRule {
 		return deltaMaxLookingDirectionChange;
 	}
 
+	public int getGroundAltitude() {
+		return groundAltitude;
+	}
+
 	public List<Coordinates> getCheckpoints() {
 		return checkpoints;
 	}
 	
-	public List<Coordinates> getSpots() {
+	public List<SpotCoordinates> getSpots() {
 		return spots;
 	}
 
@@ -45,9 +50,8 @@ public class NavigationRule {
 	public String toString() {
 		return "NavigationRule [stepDistance=" + stepDistance + ", spotVisitThreshold=" + spotVisitThreshold
 				+ ", maxHeadingChange=" + maxHeadingChange + ", maxLookingDirectionChange=" + maxLookingDirectionChange
-				+ ", deltaMaxLookingDirectionChange=" + deltaMaxLookingDirectionChange + ", checkpoints=" + checkpoints
-				+ ", spots=" + spots + "]";
+				+ ", deltaMaxLookingDirectionChange=" + deltaMaxLookingDirectionChange + ", groundAltitude="
+				+ groundAltitude + ", checkpoints=" + checkpoints + ", spots=" + spots + "]";
 	}
-
 
 }

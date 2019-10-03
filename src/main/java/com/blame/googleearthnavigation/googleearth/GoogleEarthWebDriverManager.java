@@ -1,17 +1,11 @@
 package com.blame.googleearthnavigation.googleearth;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.blame.googleearthnavigation.bean.Coordinates;
 import com.blame.googleearthnavigation.bean.NavigationPoint;
-import com.blame.googleearthnavigation.geonavigation.Navigator;
+import com.blame.googleearthnavigation.media.ImageConverter;
 
 public class GoogleEarthWebDriverManager {
 	private static Logger logger = LogManager.getLogger(GoogleEarthWebDriverManager.class);
@@ -58,12 +52,13 @@ public class GoogleEarthWebDriverManager {
 		double longitudeRounded = round(coordinates.getLongitude(), 7);
 		double headingRounded = round(navigationPoint.getLookDirectionH(), 2);
 		double tiltRounded = round(navigationPoint.getLookDirectionT(), 2);
+		int groundAltitude = navigationPoint.getGroundAltitude();
 		
 		url = url.replace("{latitude}", String.valueOf(latitudeRounded));
 		url = url.replace("{longitude}", String.valueOf(longitudeRounded));
 		url = url.replace("{heading}", String.valueOf(headingRounded));
 		url = url.replace("{tilt}", String.valueOf(tiltRounded));
-		url = url.replace("{groundAltitude}", String.valueOf(Navigator.GROUND_ALTITUDE));
+		url = url.replace("{groundAltitude}", String.valueOf(groundAltitude));
 
 		return url;
 	}
@@ -132,23 +127,13 @@ public class GoogleEarthWebDriverManager {
 	
 	public void takeScreenshotToJPG() {
 
-		// TODO: run at least the conversion as a Thread
 		screenshotIndex++;
-		
-		try {
-			logger.debug("Taking screenshot ...");
-			byte[] imageBytes = ((ChromeDriver) webDriver).getScreenshotAs(OutputType.BYTES);
-			logger.debug("Converting image to JPG and storing to file ...");
-			BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
-			// create a blank, RGB, same width and height, and a white background
-			BufferedImage newBufferedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-			newBufferedImage.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
-			// write to jpeg file
-			ImageIO.write(newBufferedImage, "jpg", new File(picsFolderName + File.separator + screenshotIndex + ".jpg"));
-		} 
-		catch (IOException e) {
-			logger.catching(e);
-		}
+
+		logger.debug("Taking screenshot ...");
+		byte[] imageBytes = ((ChromeDriver) webDriver).getScreenshotAs(OutputType.BYTES);
+		String filename = picsFolderName + File.separator + screenshotIndex + ".jpg";
+		ImageConverter imageConverter = new ImageConverter(imageBytes, filename);
+		imageConverter.start();
 	}
 
 	/**
