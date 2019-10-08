@@ -24,12 +24,12 @@ public class Navigator {
 	protected double currentMaxLookingHDirectionChange;
 	protected double currentMaxLookingTDirectionChange;
 
-	protected boolean isSpotOnFocus;
+	protected boolean isSpotOnFocus = true;
 
-	protected MapCoordinatesDotNetScraper elevationScraper;
+	//protected MapCoordinatesDotNetScraper elevationScraper;
 
 	/**
-	 * 
+	 * Constructor
 	 * @param navigationRule
 	 */
 	public Navigator(NavigationRule navigationRule) {
@@ -38,11 +38,24 @@ public class Navigator {
 		
 		this.navigationPointList = new ArrayList<>();
 		
-		this.isSpotOnFocus = true;
-		
-		this.elevationScraper = new MapCoordinatesDotNetScraper();
+		//this.elevationScraper = new MapCoordinatesDotNetScraper();
 	}
 
+	/**
+	 * Constructor
+	 * @param navigationPointList
+	 */
+	public Navigator(NavigationRule navigationRule, List<NavigationPoint> navigationPointList) {
+		this.navigationRule = navigationRule;
+		this.checkpointChangeThreshold = navigationRule.getStepDistance() / 2;
+
+		this.navigationPointList = navigationPointList;
+	}
+
+	public extendNavigationWithGroundAltitude() {
+		
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -57,18 +70,23 @@ public class Navigator {
 		
 		double heading = GeoNavigationUtils.getDirection(checkpoints.get(0), checkpoints.get(1));
 		double lookDirectionH = GeoNavigationUtils.getDirection(checkpoints.get(0), navigationRule.getSpots().get(0));
-		int coordinatesAltitude = elevationScraper.getElevation(checkpoints.get(0));
-		double lookDirectionT = 90. - GeoNavigationUtils.getTiltAngle(
-											checkpoints.get(0), 
-											navigationRule.getSpots().get(0), 
-											navigationRule.getFixedSeaLevelAltitude() - coordinatesAltitude - navigationRule.getSpots().get(0).getGroundAltitude());
+//		int coordinatesAltitude = elevationScraper.getElevation(checkpoints.get(0));
+//		double lookDirectionT = 90. - GeoNavigationUtils.getTiltAngle(
+//											checkpoints.get(0), 
+//											navigationRule.getSpots().get(0), 
+//											navigationRule.getFixedSeaLevelAltitude() - coordinatesAltitude - navigationRule.getSpots().get(0).getGroundAltitude());
+//		NavigationPoint navigationPoint = new NavigationPoint(
+//				checkpoints.get(0), 
+//				navigationRule.getFixedSeaLevelAltitude() - coordinatesAltitude, 
+//				heading, 
+//				lookDirectionH, 
+//				lookDirectionT, 
+//				false);
 		NavigationPoint navigationPoint = new NavigationPoint(
-													checkpoints.get(0), 
-													navigationRule.getFixedSeaLevelAltitude() - coordinatesAltitude, 
-													heading, 
-													lookDirectionH, 
-													lookDirectionT, 
-													false);
+				checkpoints.get(0), 
+				heading, 
+				lookDirectionH, 
+				false);
 		navigationPointList.add(navigationPoint);
 		for(int i = 0; i < checkpoints.size() -1; i++) {
 			Coordinates checkpointTo = checkpoints.get(i+1);
@@ -95,7 +113,7 @@ public class Navigator {
 		
 		double heading = navigationPoint.getHeading();
 		double lookDirectionH = navigationPoint.getLookDirectionH();
-		double lookDirectionT = navigationPoint.getLookDirectionT();
+//		double lookDirectionT = navigationPoint.getLookDirectionT();
 		double distanceToSpot = GeoNavigationUtils.getDistance(navigationPoint.getCoordinates(), targetSpot);
 
 		boolean keepLoopCondition = true;
@@ -159,27 +177,28 @@ public class Navigator {
 				}
 			}
 			
-			// altitude
-			int coordinatesAltitude = elevationScraper.getElevation(coordinates);
-			
-			// calculate the tilt look direction change
-			double previousLookDirectionT = lookDirectionT;
-			lookDirectionT = 90. - GeoNavigationUtils.getTiltAngle(coordinates, targetSpot, navigationRule.getFixedSeaLevelAltitude() - coordinatesAltitude - targetSpot.getGroundAltitude());
-			if(!isSpotOnFocus) {
-				double lookDirectionTChange = GeoNavigationUtils.subtractDirections(previousLookDirectionT, lookDirectionT);
-				updateLimitOfLookingDirectionTChange(lookDirectionTChange);
-				if(Math.abs(lookDirectionTChange) > currentMaxLookingTDirectionChange) {
-					if(lookDirectionTChange >= 0) {
-						lookDirectionT = GeoNavigationUtils.addDirections(previousLookDirectionT, currentMaxLookingTDirectionChange);
-					}
-					else {
-						lookDirectionT = GeoNavigationUtils.addDirections(previousLookDirectionT, -currentMaxLookingTDirectionChange);
-					}
-				}
-			}
+//			// altitude
+//			int coordinatesAltitude = elevationScraper.getElevation(coordinates);
+//			
+//			// calculate the tilt look direction change
+//			double previousLookDirectionT = lookDirectionT;
+//			lookDirectionT = 90. - GeoNavigationUtils.getTiltAngle(coordinates, targetSpot, navigationRule.getFixedSeaLevelAltitude() - coordinatesAltitude - targetSpot.getGroundAltitude());
+//			if(!isSpotOnFocus) {
+//				double lookDirectionTChange = GeoNavigationUtils.subtractDirections(previousLookDirectionT, lookDirectionT);
+//				updateLimitOfLookingDirectionTChange(lookDirectionTChange);
+//				if(Math.abs(lookDirectionTChange) > currentMaxLookingTDirectionChange) {
+//					if(lookDirectionTChange >= 0) {
+//						lookDirectionT = GeoNavigationUtils.addDirections(previousLookDirectionT, currentMaxLookingTDirectionChange);
+//					}
+//					else {
+//						lookDirectionT = GeoNavigationUtils.addDirections(previousLookDirectionT, -currentMaxLookingTDirectionChange);
+//					}
+//				}
+//			}
 
 			// set the navigation point
-			navigationPoint = new NavigationPoint(coordinates, navigationRule.getFixedSeaLevelAltitude() - coordinatesAltitude, heading, lookDirectionH, lookDirectionT, isVisiting);
+//			navigationPoint = new NavigationPoint(coordinates, navigationRule.getFixedSeaLevelAltitude() - coordinatesAltitude, heading, lookDirectionH, lookDirectionT, isVisiting);
+			navigationPoint = new NavigationPoint(coordinates, heading, lookDirectionH, isVisiting);
 			navigationPointList.add(navigationPoint);
 
 			// stop condition

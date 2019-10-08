@@ -35,12 +35,12 @@ public class Launcher {
 		// load the navigation rule from JSON file
 		NavigationRule navigationRule = loadNavigationRule(baseFolderName);
         
-        // navigate: get the list of navigation points
+        // navigate: get the list of navigation points (no altitude yet)
         Navigator navigator = new Navigator(navigationRule);
         List<NavigationPoint> navigationPointList = navigator.navigate();
         
         // write coordinates into the CSV file
-        writeCSVFile(navigationPointList, baseFolderName);
+        writeNavigationPointsToCSVFile(navigationPointList, baseFolderName);
 
         // take the Google Earth screenshots
         takeScreenshots(webDriverManager, navigationPointList, baseFolderName);
@@ -72,21 +72,34 @@ public class Launcher {
 	 * @param baseFolderName 
 	 * @throws IOException 
 	 */
-	protected static void writeCSVFile(List<NavigationPoint> navigationPointList, String baseFolderName) throws IOException {
+	protected static void writeNavigationPointsToCSVFile(List<NavigationPoint> navigationPointList, String baseFolderName) throws IOException {
 		logger.info("Writing coordinates file ...");
 
 		File fileCSVCoordinates = new File(baseFolderName + File.separator + "coordinates.csv");
 		FileWriter fw = new FileWriter(fileCSVCoordinates);
-		fw.write("index,latitude,longitude,groundAltitude,heading,look_h,look_t,is_visiting" + System.lineSeparator());
+		fw.write("index,latitude,longitude,altitude,groundAltitude,heading,look_h,look_t,is_visiting" + System.lineSeparator());
 		for(int i = 0; i < navigationPointList.size(); i++) {
 			NavigationPoint navigationPoint = navigationPointList.get(i);
-			fw.write((i + 1) + "," + 
-        			navigationPoint.getCoordinates().getLatitude() + "," + navigationPoint.getCoordinates().getLongitude() + "," +
-        			navigationPoint.getGroundAltitude() + "," + navigationPoint.getHeading() + "," + 
-        			navigationPoint.getLookDirectionH() + "," + navigationPoint.getLookDirectionT() + "," +
-        			navigationPoint.isVisiting() + System.lineSeparator());
+			StringBuffer sb = new StringBuffer(String.valueOf(i + 1)).append(",");
+			sb.append(navigationPoint.getCoordinates().getLatitude()).append(",");
+			sb.append(navigationPoint.getCoordinates().getLongitude()).append(",");
+			if(navigationPoint.getAltitude() != null) {
+				sb.append(navigationPoint.getAltitude()).append(",");
+			}
+			if(navigationPoint.getGroundAltitude() != null) {
+				sb.append(navigationPoint.getGroundAltitude()).append(",");
+			}
+			sb.append(navigationPoint.getHeading()).append(",");
+			sb.append(navigationPoint.getLookDirectionH()).append(",");
+			if(navigationPoint.getLookDirectionT() != null) {
+				sb.append(navigationPoint.getLookDirectionT()).append(",");
+			}
+			sb.append(navigationPoint.isVisiting()).append(System.lineSeparator());
+			
+			fw.write(sb.toString());
         }
         fw.close();
+		logger.info("Coordinates file written ...");
 	}
 
 	/**

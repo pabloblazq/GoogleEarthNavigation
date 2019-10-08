@@ -4,12 +4,13 @@ public class NavigationPoint {
 
 	// movement
 	protected Coordinates coordinates;
-	protected int groundAltitude;
+	protected Integer altitude;
+	protected Integer groundAltitude;
 	protected double heading;
 	
 	// looking
 	protected double lookDirectionH;
-	protected double lookDirectionT;
+	protected Double lookDirectionT;
 	protected boolean isVisiting;
 
 	public NavigationPoint(Coordinates coordinates, int groundAltitude, double heading, double lookDirectionH, double lookDirectionT, boolean isVisiting) {
@@ -22,11 +23,23 @@ public class NavigationPoint {
 		this.isVisiting = isVisiting;
 	}
 
+	public NavigationPoint(Coordinates coordinates, double heading, double lookDirectionH, boolean isVisiting) {
+		super();
+		this.coordinates = coordinates;
+		this.heading = heading;
+		this.lookDirectionH = lookDirectionH;
+		this.isVisiting = isVisiting;
+	}
+
 	public Coordinates getCoordinates() {
 		return coordinates;
 	}
 
-	public int getGroundAltitude() {
+	public Integer getAltitude() {
+		return altitude;
+	}
+
+	public Integer getGroundAltitude() {
 		return groundAltitude;
 	}
 
@@ -38,7 +51,7 @@ public class NavigationPoint {
 		return lookDirectionH;
 	}
 
-	public double getLookDirectionT() {
+	public Double getLookDirectionT() {
 		return lookDirectionT;
 	}
 
