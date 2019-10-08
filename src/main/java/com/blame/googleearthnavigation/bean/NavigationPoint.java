@@ -9,61 +9,71 @@ public class NavigationPoint {
 	protected double heading;
 	
 	// looking
-	protected double lookDirectionH;
-	protected Double lookDirectionT;
-	protected boolean isVisiting;
-
-	public NavigationPoint(Coordinates coordinates, int groundAltitude, double heading, double lookDirectionH, double lookDirectionT, boolean isVisiting) {
-		super();
-		this.coordinates = coordinates;
-		this.groundAltitude = groundAltitude;
-		this.heading = heading;
-		this.lookDirectionH = lookDirectionH;
-		this.lookDirectionT = lookDirectionT;
-		this.isVisiting = isVisiting;
-	}
-
-	public NavigationPoint(Coordinates coordinates, double heading, double lookDirectionH, boolean isVisiting) {
-		super();
-		this.coordinates = coordinates;
-		this.heading = heading;
-		this.lookDirectionH = lookDirectionH;
-		this.isVisiting = isVisiting;
-	}
-
+	protected SpotCoordinates spotCoordinates;
+	protected double spotLookDirectionH;
+	protected Double spotLookDirectionT;
+	protected boolean isSpotVisiting;
+	protected boolean isSpotOnFocus;
+	
 	public Coordinates getCoordinates() {
 		return coordinates;
 	}
-
+	public void setCoordinates(Coordinates coordinates) {
+		this.coordinates = coordinates;
+	}
 	public Integer getAltitude() {
 		return altitude;
 	}
-
+	public void setAltitude(Integer altitude) {
+		this.altitude = altitude;
+	}
 	public Integer getGroundAltitude() {
 		return groundAltitude;
 	}
-
+	public void setGroundAltitude(Integer groundAltitude) {
+		this.groundAltitude = groundAltitude;
+	}
 	public double getHeading() {
 		return heading;
 	}
-
-	public double getLookDirectionH() {
-		return lookDirectionH;
+	public void setHeading(double heading) {
+		this.heading = heading;
 	}
-
-	public Double getLookDirectionT() {
-		return lookDirectionT;
+	public SpotCoordinates getSpotCoordinates() {
+		return spotCoordinates;
 	}
-
-	public boolean isVisiting() {
-		return isVisiting;
+	public void setSpotCoordinates(SpotCoordinates spotCoordinates) {
+		this.spotCoordinates = spotCoordinates;
 	}
-
+	public double getSpotLookDirectionH() {
+		return spotLookDirectionH;
+	}
+	public void setSpotLookDirectionH(double spotLookDirectionH) {
+		this.spotLookDirectionH = spotLookDirectionH;
+	}
+	public Double getSpotLookDirectionT() {
+		return spotLookDirectionT;
+	}
+	public void setSpotLookDirectionT(Double spotLookDirectionT) {
+		this.spotLookDirectionT = spotLookDirectionT;
+	}
+	public boolean isSpotVisiting() {
+		return isSpotVisiting;
+	}
+	public void setSpotVisiting(boolean isSpotVisiting) {
+		this.isSpotVisiting = isSpotVisiting;
+	}
+	public boolean isSpotOnFocus() {
+		return isSpotOnFocus;
+	}
+	public void setSpotOnFocus(boolean isSpotOnFocus) {
+		this.isSpotOnFocus = isSpotOnFocus;
+	}
 	@Override
 	public String toString() {
-		return "NavigationPoint [coordinates=" + coordinates + ", groundAltitude=" + groundAltitude + ", heading="
-				+ heading + ", lookDirectionH=" + lookDirectionH + ", lookDirectionT=" + lookDirectionT
-				+ ", isVisiting=" + isVisiting + "]";
+		return "NavigationPoint [coordinates=" + coordinates + ", altitude=" + altitude + ", groundAltitude="
+				+ groundAltitude + ", heading=" + heading + ", spotCoordinates=" + spotCoordinates
+				+ ", spotLookDirectionH=" + spotLookDirectionH + ", spotLookDirectionT=" + spotLookDirectionT
+				+ ", isSpotVisiting=" + isSpotVisiting + ", isSpotOnFocus=" + isSpotOnFocus + "]";
 	}
-
 }

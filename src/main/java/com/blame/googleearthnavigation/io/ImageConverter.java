@@ -1,4 +1,4 @@
-package com.blame.googleearthnavigation.media;
+package com.blame.googleearthnavigation.io;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

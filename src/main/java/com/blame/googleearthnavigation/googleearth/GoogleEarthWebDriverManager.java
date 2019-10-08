@@ -19,7 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.blame.googleearthnavigation.bean.Coordinates;
 import com.blame.googleearthnavigation.bean.NavigationPoint;
-import com.blame.googleearthnavigation.media.ImageConverter;
+import com.blame.googleearthnavigation.io.ImageConverter;
 
 public class GoogleEarthWebDriverManager {
 	private static Logger logger = LogManager.getLogger(GoogleEarthWebDriverManager.class);
@@ -44,14 +44,43 @@ public class GoogleEarthWebDriverManager {
 		this.screenshotIndex = 0;
 	}
 
-	public String buildURL(NavigationPoint navigationPoint) {
+	/**
+	 * 
+	 * @param webDriverManager 
+	 * @param navigationPointList
+	 * @throws InterruptedException 
+	 */
+	public void takeScreenshots(List<NavigationPoint> navigationPointList) {
+		logger.info("Taking screenshots using a WebDriver ...");
+
+//		List<Integer> errorList = Arrays.asList(145, 325, 453, 791);
+//        for(int errorIndex = 0; errorIndex < errorList.size(); errorIndex++) {
+//        	int i = errorList.get(errorIndex);
+
+        for(int i = 0; i < navigationPointList.size(); i++) {
+        	try {
+        		logger.info("------------------------------------------------------------------------------------------------------------------------");
+				NavigationPoint navigationPoint = navigationPointList.get(i);
+				String url = buildURL(navigationPoint);
+				logger.info("Taking  screenshot for URL {}: {}", i + 1, url);
+				prepareScreenshot(url);
+				takeScreenshotToJPG();
+				logger.info("Taken   screenshot for URL {}: {}", i + 1, getCurrentURL());
+			} catch (Exception e) {
+				logger.catching(e);
+			}
+        }		
+		logger.info("------------------------------------------------------------------------------------------------------------------------");
+	}
+
+	protected String buildURL(NavigationPoint navigationPoint) {
 		
 		String url = URL_PATTERN;
 		Coordinates coordinates = navigationPoint.getCoordinates();
 		double latitudeRounded = round(coordinates.getLatitude(), 7);
 		double longitudeRounded = round(coordinates.getLongitude(), 7);
-		double headingRounded = round(navigationPoint.getLookDirectionH(), 2);
-		double tiltRounded = round(navigationPoint.getLookDirectionT(), 2);
+		double headingRounded = round(navigationPoint.getSpotLookDirectionH(), 2);
+		double tiltRounded = round(navigationPoint.getSpotLookDirectionT(), 2);
 		int groundAltitude = navigationPoint.getGroundAltitude();
 		
 		url = url.replace("{latitude}", String.valueOf(latitudeRounded));
@@ -63,7 +92,7 @@ public class GoogleEarthWebDriverManager {
 		return url;
 	}
 	
-	public static double round(double value, int places) {
+	protected static double round(double value, int places) {
 	    if (places < 0) throw new IllegalArgumentException();
 
 	    BigDecimal bd = BigDecimal.valueOf(value);
@@ -75,7 +104,7 @@ public class GoogleEarthWebDriverManager {
 	 * 
 	 * @param url
 	 */
-	public void prepareScreenshot(String url) {
+	protected void prepareScreenshot(String url) {
 		webDriver.get(url);
 		
 		WebElement elConsentLater = (new WebDriverWait(webDriver, 5))
@@ -110,7 +139,7 @@ public class GoogleEarthWebDriverManager {
 	 * 
 	 * @return
 	 */
-	public void takeScreenshot() {
+	protected void takeScreenshot() {
 		
 		screenshotIndex++;
 		
@@ -125,7 +154,7 @@ public class GoogleEarthWebDriverManager {
 		}
 	}
 	
-	public void takeScreenshotToJPG() {
+	protected void takeScreenshotToJPG() {
 
 		screenshotIndex++;
 
@@ -140,7 +169,7 @@ public class GoogleEarthWebDriverManager {
 	 * 
 	 * @return
 	 */
-	public Object getCurrentURL() {
+	protected Object getCurrentURL() {
 		return webDriver.getCurrentUrl();
 	}
 
