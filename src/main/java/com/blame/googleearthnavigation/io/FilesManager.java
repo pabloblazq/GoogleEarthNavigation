@@ -14,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import com.blame.googleearthnavigation.bean.Coordinates;
 import com.blame.googleearthnavigation.bean.NavigationPoint;
 import com.blame.googleearthnavigation.bean.NavigationRule;
+import com.blame.googleearthnavigation.bean.SpotCoordinates;
+import com.blame.googleearthnavigation.geonavigation.GeoNavigationUtils;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
@@ -52,12 +54,13 @@ public class FilesManager {
 		File fileCSVCoordinates = new File(baseFolderName + File.separator + "coordinates.csv");
 		FileWriter fw = new FileWriter(fileCSVCoordinates);
 		fw.write("index" + FIELD_SEPARATOR + "latitude" + FIELD_SEPARATOR + "longitude" + FIELD_SEPARATOR + "altitude" + FIELD_SEPARATOR + "ground_altitude" + FIELD_SEPARATOR + 
-				"heading" + FIELD_SEPARATOR + "look_h" + FIELD_SEPARATOR + "look_t" + FIELD_SEPARATOR + "is_visiting" + FIELD_SEPARATOR + "is_spot_on_focus" + System.lineSeparator());
+				"spot_latitude" + FIELD_SEPARATOR + "spot_longitude" + FIELD_SEPARATOR + "heading" + FIELD_SEPARATOR + "look_h" + FIELD_SEPARATOR + "look_t" + FIELD_SEPARATOR + 
+				"is_visiting" + FIELD_SEPARATOR + "is_spot_on_focus" + System.lineSeparator());
 		for(int i = 0; i < navigationPointList.size(); i++) {
 			NavigationPoint navigationPoint = navigationPointList.get(i);
 			StringBuffer sb = new StringBuffer(String.valueOf(i + 1)).append(FIELD_SEPARATOR);
-			sb.append(navigationPoint.getCoordinates().getLatitude()).append(FIELD_SEPARATOR);
-			sb.append(navigationPoint.getCoordinates().getLongitude()).append(FIELD_SEPARATOR);
+			sb.append(GeoNavigationUtils.round(navigationPoint.getCoordinates().getLatitude(), 6)).append(FIELD_SEPARATOR);
+			sb.append(GeoNavigationUtils.round(navigationPoint.getCoordinates().getLongitude(), 6)).append(FIELD_SEPARATOR);
 			if(navigationPoint.getAltitude() != null) {
 				sb.append(navigationPoint.getAltitude()).append(FIELD_SEPARATOR);
 			} else {
@@ -68,6 +71,8 @@ public class FilesManager {
 			} else {
 				sb.append(FIELD_SEPARATOR);
 			}
+			sb.append(navigationPoint.getSpotCoordinates().getLatitude()).append(FIELD_SEPARATOR);
+			sb.append(navigationPoint.getSpotCoordinates().getLongitude()).append(FIELD_SEPARATOR);
 			sb.append(navigationPoint.getHeading()).append(FIELD_SEPARATOR);
 			sb.append(navigationPoint.getSpotLookDirectionH()).append(FIELD_SEPARATOR);
 			if(navigationPoint.getSpotLookDirectionT() != null) {
@@ -75,13 +80,13 @@ public class FilesManager {
 			} else {
 				sb.append(FIELD_SEPARATOR);
 			}
-			sb.append(navigationPoint.isSpotVisiting()).append(System.lineSeparator());
+			sb.append(navigationPoint.isSpotVisiting()).append(FIELD_SEPARATOR);
 			sb.append(navigationPoint.isSpotOnFocus()).append(System.lineSeparator());
 			
 			fw.write(sb.toString());
         }
         fw.close();
-		logger.info("Coordinates file written ...");
+		logger.info("Coordinates file written.");
 	}
 
 	/**
@@ -91,6 +96,7 @@ public class FilesManager {
 	 * @throws IOException 
 	 */
 	public static List<NavigationPoint> readCSVFileToNavigationPoints(String baseFolderName) throws IOException {
+		logger.info("Reading coordinates file ...");
 		
 		List<NavigationPoint> navigationPointList = new ArrayList<>();
 		
@@ -111,16 +117,21 @@ public class FilesManager {
 			if(!fields[4].equals("")) {
 				navigationPoint.setGroundAltitude(Integer.parseInt(fields[4]));
 			}
-			navigationPoint.setHeading(Double.parseDouble(fields[5]));
-			navigationPoint.setSpotLookDirectionH(Double.parseDouble(fields[6]));
-			if(!fields[7].equals("")) {
-				navigationPoint.setSpotLookDirectionT(Double.parseDouble(fields[7]));
+			//TODO: read spot ground altitude
+			navigationPoint.setSpotCoordinates(new SpotCoordinates(Double.parseDouble(fields[5]), Double.parseDouble(fields[6]), 20));
+			navigationPoint.setHeading(Double.parseDouble(fields[7]));
+			navigationPoint.setSpotLookDirectionH(Double.parseDouble(fields[8]));
+			if(!fields[9].equals("")) {
+				navigationPoint.setSpotLookDirectionT(Double.parseDouble(fields[9]));
 			}
-			navigationPoint.setSpotVisiting(Boolean.parseBoolean(fields[8]));
-			navigationPoint.setSpotOnFocus(Boolean.parseBoolean(fields[9]));
+			navigationPoint.setSpotVisiting(Boolean.parseBoolean(fields[10]));
+			navigationPoint.setSpotOnFocus(Boolean.parseBoolean(fields[11]));
+			
+			navigationPointList.add(navigationPoint);
 		}
 		scanner.close();
 		
+		logger.info("Coordinates file read.");
 		return navigationPointList;
 	}
 }

@@ -25,7 +25,6 @@ public class ElevatedNavigationManager {
 	public static void main(String[] args) throws IOException, InterruptedException {
 
 		String baseFolderName = args[0];
-		GoogleEarthWebDriverManager webDriverManager = new GoogleEarthWebDriverManager(baseFolderName);
 		
 		// load the navigation rule from JSON file
 		NavigationRule navigationRule = FilesManager.loadNavigationRule(baseFolderName);
@@ -38,6 +37,7 @@ public class ElevatedNavigationManager {
         navigator.extendNavigationPointsWithGroundAltitude();
         
         // take the Google Earth screenshots
+		GoogleEarthWebDriverManager webDriverManager = new GoogleEarthWebDriverManager(baseFolderName);
 		//Thread.sleep(100*60*1000);
 		//Thread.sleep(10*1000);
         webDriverManager.takeScreenshots(navigationPointList);

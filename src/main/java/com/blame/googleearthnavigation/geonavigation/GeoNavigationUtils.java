@@ -1,5 +1,8 @@
 package com.blame.googleearthnavigation.geonavigation;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import com.blame.googleearthnavigation.bean.Coordinates;
 
 public class GeoNavigationUtils {
@@ -84,6 +87,14 @@ public class GeoNavigationUtils {
 			sumDirection += 360;
 		}
 		return sumDirection;
+	}
+
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    BigDecimal bd = BigDecimal.valueOf(value);
+	    bd = bd.setScale(places, RoundingMode.HALF_UP);
+	    return bd.doubleValue();
 	}
 
 }

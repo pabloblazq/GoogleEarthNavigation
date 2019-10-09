@@ -19,6 +19,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.blame.googleearthnavigation.bean.Coordinates;
 import com.blame.googleearthnavigation.bean.NavigationPoint;
+import com.blame.googleearthnavigation.geonavigation.GeoNavigationUtils;
 import com.blame.googleearthnavigation.io.ImageConverter;
 
 public class GoogleEarthWebDriverManager {
@@ -77,10 +78,10 @@ public class GoogleEarthWebDriverManager {
 		
 		String url = URL_PATTERN;
 		Coordinates coordinates = navigationPoint.getCoordinates();
-		double latitudeRounded = round(coordinates.getLatitude(), 7);
-		double longitudeRounded = round(coordinates.getLongitude(), 7);
-		double headingRounded = round(navigationPoint.getSpotLookDirectionH(), 2);
-		double tiltRounded = round(navigationPoint.getSpotLookDirectionT(), 2);
+		double latitudeRounded = GeoNavigationUtils.round(coordinates.getLatitude(), 6);
+		double longitudeRounded = GeoNavigationUtils.round(coordinates.getLongitude(), 6);
+		double headingRounded = GeoNavigationUtils.round(navigationPoint.getSpotLookDirectionH(), 2);
+		double tiltRounded = GeoNavigationUtils.round(navigationPoint.getSpotLookDirectionT(), 2);
 		int groundAltitude = navigationPoint.getGroundAltitude();
 		
 		url = url.replace("{latitude}", String.valueOf(latitudeRounded));
@@ -92,14 +93,6 @@ public class GoogleEarthWebDriverManager {
 		return url;
 	}
 	
-	protected static double round(double value, int places) {
-	    if (places < 0) throw new IllegalArgumentException();
-
-	    BigDecimal bd = BigDecimal.valueOf(value);
-	    bd = bd.setScale(places, RoundingMode.HALF_UP);
-	    return bd.doubleValue();
-	}
-
 	/**
 	 * 
 	 * @param url

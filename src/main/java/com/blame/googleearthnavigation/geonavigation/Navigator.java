@@ -171,7 +171,6 @@ public class Navigator {
 		        logger.info("Established focus onto spot {}", targetSpot);
 				isSpotOnFocus = true;
 				this.currentMaxLookingHDirectionChange = 0;
-				this.currentMaxLookingTDirectionChange = 0;
 			}
 		}
 	}
@@ -215,8 +214,8 @@ public class Navigator {
 	        logger.info("Finished visit to spot {}", targetSpot);
 	        isSpotVisiting = false;
 			List<SpotCoordinates> spots = navigationRule.getSpots();
-			spots.remove(targetSpot);
-			if(!spots.isEmpty()) {
+			if(spots.size() > 1) {
+				spots.remove(targetSpot);
 				isSpotOnFocus = false;
 		        logger.info("Changing target spot to {}", spots.get(0));
 			}
@@ -226,9 +225,12 @@ public class Navigator {
 	
 	public void extendNavigationPointsWithGroundAltitude() {
 		
+        logger.info("Start extending altitude related parameters of the navigation");
+		
 		for(int index = 0; index < navigationPointList.size(); index++) {
 
 			NavigationPoint navigationPoint = navigationPointList.get(index);
+			boolean isSpotOnFocus = navigationPoint.isSpotOnFocus();
 			
 			int groundAltitude = navigationRule.getFixedSeaLevelAltitude() - navigationPoint.getAltitude();
 			
@@ -246,11 +248,16 @@ public class Navigator {
 						lookDirectionT = GeoNavigationUtils.addDirections(previousLookDirectionT, -currentMaxLookingTDirectionChange);
 					}
 				}
+				else {
+					this.currentMaxLookingTDirectionChange = 0;
+				}
 			}
 			
 			navigationPoint.setGroundAltitude(groundAltitude);
 			navigationPoint.setSpotLookDirectionT(lookDirectionT);
 		}
+		
+		logger.info("Extension finished.");
 	}
 	
 	/**
